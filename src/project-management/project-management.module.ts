@@ -1,9 +1,16 @@
 import { Module } from '@nestjs/common';
-import { ProjectManagementController } from './controllers/project-management.controller';
-import { ProjectManagementService } from './services/project-management.service';
+import { MilestoneController } from './controllers/milestone.controller';
+import { MilestoneService } from './services/milestone.service';
+import { MongooseModule } from '@nestjs/mongoose';
+import { Milestone, MilestoneSchema } from './schemas/milestone.schema';
 
 @Module({
-  controllers: [ProjectManagementController],
-  providers: [ProjectManagementService],
+  imports: [
+    MongooseModule.forFeature([
+      { name: Milestone.name, schema: MilestoneSchema },
+    ]),
+  ],
+  controllers: [MilestoneController],
+  providers: [MilestoneService],
 })
 export class ProjectManagementModule {}
