@@ -7,8 +7,9 @@ import {
   Patch,
   Delete,
 } from '@nestjs/common';
-import { MilestoneService } from '../services/milestone.service';
+import { MilestoneService } from '../../../domain/services/milestone.service';
 import { CreateMilestoneDto, UpdateMilestoneDto } from '../dto/milestone.dto';
+import { MilestoneMapper } from '../../../mappers/milestone.mapper';
 
 @Controller('milestone')
 export class MilestoneController {
@@ -26,7 +27,9 @@ export class MilestoneController {
 
   @Post()
   create(@Body() createMilestoneDto: CreateMilestoneDto) {
-    return this.milestoneService.create(createMilestoneDto);
+    const createMilestoneInput =
+      MilestoneMapper.createMilestoneDtoToDomainInput(createMilestoneDto);
+    return this.milestoneService.create(createMilestoneInput);
   }
 
   @Patch(':id')
@@ -34,7 +37,9 @@ export class MilestoneController {
     @Param('id') id: string,
     @Body() updateMilestoneDto: UpdateMilestoneDto,
   ) {
-    return this.milestoneService.updateOne(id, updateMilestoneDto);
+    const updateMilestoneInput =
+      MilestoneMapper.updateMilestoneDtoToDomainInput(updateMilestoneDto);
+    return this.milestoneService.updateOne(id, updateMilestoneInput);
   }
 
   @Delete(':id')
