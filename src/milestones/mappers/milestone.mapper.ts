@@ -1,9 +1,9 @@
 import {
   CreateMilestoneDto,
   UpdateMilestoneDto,
-} from 'src/project-management/api/rest/dto/milestone.dto';
-import { Milestone } from 'src/project-management/domain/entities/milestone.entity';
-import { MilestoneDocument } from 'src/project-management/data/schemas/milestone.schema';
+} from 'src/milestones/api/rest/dto/milestone.dto';
+import { Milestone } from 'src/milestones/domain/entities/milestone.entity';
+import { MilestoneDocument } from 'src/milestones/data/schemas/milestone.schema';
 export class MilestoneMapper {
   static createMilestoneDtoToDomainInput(
     createMilestoneDto: CreateMilestoneDto,

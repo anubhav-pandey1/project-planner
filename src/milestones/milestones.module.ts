@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { MilestoneController } from 'src/project-management/api/rest/controllers/milestone.controller';
-import { MilestoneService } from 'src/project-management/domain/services/milestone.service';
+import { MilestoneController } from 'src/milestones/api/rest/controllers/milestone.controller';
+import { MilestoneService } from 'src/milestones/domain/services/milestone.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import {
   MilestoneModel,
   MilestoneSchema,
-} from 'src/project-management/data/schemas/milestone.schema';
+} from 'src/milestones/data/schemas/milestone.schema';
 
 @Module({
   imports: [
@@ -16,4 +16,4 @@ import {
   controllers: [MilestoneController],
   providers: [MilestoneService],
 })
-export class ProjectManagementModule {}
+export class MilestonesModule {}

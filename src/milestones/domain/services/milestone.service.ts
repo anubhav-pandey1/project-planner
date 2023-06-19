@@ -5,9 +5,9 @@ import { InjectModel } from '@nestjs/mongoose';
 import {
   MilestoneModel,
   MilestoneDocument,
-} from 'src/project-management/data/schemas/milestone.schema';
-import { Milestone } from 'src/project-management/domain/entities/milestone.entity';
-import { MilestoneMapper } from 'src/project-management/mappers/milestone.mapper';
+} from 'src/milestones/data/schemas/milestone.schema';
+import { Milestone } from 'src/milestones/domain/entities/milestone.entity';
+import { MilestoneMapper } from 'src/milestones/mappers/milestone.mapper';
 
 @Injectable()
 export class MilestoneService {

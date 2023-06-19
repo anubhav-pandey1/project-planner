@@ -7,12 +7,12 @@ import {
   Patch,
   Delete,
 } from '@nestjs/common';
-import { MilestoneService } from 'src/project-management/domain/services/milestone.service';
+import { MilestoneService } from 'src/milestones/domain/services/milestone.service';
 import {
   CreateMilestoneDto,
   UpdateMilestoneDto,
-} from 'src/project-management/api/rest/dto/milestone.dto';
-import { MilestoneMapper } from 'src/project-management/mappers/milestone.mapper';
+} from 'src/milestones/api/rest/dto/milestone.dto';
+import { MilestoneMapper } from 'src/milestones/mappers/milestone.mapper';
 
 @Controller('milestone')
 export class MilestoneController {

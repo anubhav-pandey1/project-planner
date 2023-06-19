@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { ProjectManagementModule } from './project-management/project-management.module';
+import { MilestonesModule } from 'src/milestones/milestones.module';
 import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
   imports: [
-    ProjectManagementModule,
+    MilestonesModule,
     MongooseModule.forRoot(process.env.MONGODB_URI as string, {}),
   ],
 })
