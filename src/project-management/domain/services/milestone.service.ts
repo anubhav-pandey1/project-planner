@@ -1,30 +1,54 @@
+import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
-import { Milestone } from '../entities/milestone.entity';
-import { MilestoneRepository } from '../../data/repositories/milestone.repository';
+import { InjectModel } from '@nestjs/mongoose';
+
+import {
+  MilestoneModel,
+  MilestoneDocument,
+} from 'src/project-management/data/schemas/milestone.schema';
+import { Milestone } from 'src/project-management/domain/entities/milestone.entity';
+import { MilestoneMapper } from 'src/project-management/mappers/milestone.mapper';
 
 @Injectable()
 export class MilestoneService {
-  constructor(private readonly milestoneRepository: MilestoneRepository) {}
+  constructor(
+    @InjectModel(MilestoneModel.name)
+    private readonly milestoneModel: Model<MilestoneDocument>,
+  ) {}
 
   async create(createMilestoneInput: Partial<Milestone>) {
-    const createdMilestone =
-      this.milestoneRepository.create(createMilestoneInput);
-    return createdMilestone;
+    const createdMilestone = await this.milestoneModel.create(
+      createMilestoneInput,
+    );
+    console.log(createdMilestone);
+    return MilestoneMapper.persistenceToDomainEntity(createdMilestone);
   }
 
   async findAll() {
-    return this.milestoneRepository.findAll();
+    const models = await this.milestoneModel.find().exec();
+    return models.map((model) =>
+      MilestoneMapper.persistenceToDomainEntity(model),
+    );
   }
 
   async findOne(id: string) {
-    return this.milestoneRepository.findById(id);
+    const model = await this.milestoneModel.findById(id).exec();
+    return model ? MilestoneMapper.persistenceToDomainEntity(model) : null;
   }
 
   async updateOne(id: string, updateMilestoneInput: Partial<Milestone>) {
-    return this.milestoneRepository.update(id, updateMilestoneInput);
+    const updatedModel = await this.milestoneModel
+      .findByIdAndUpdate(id, updateMilestoneInput, { new: true })
+      .exec();
+    return updatedModel
+      ? MilestoneMapper.persistenceToDomainEntity(updatedModel)
+      : null;
   }
 
   async delete(id: string) {
-    return this.milestoneRepository.delete(id);
+    const deletedModel = await this.milestoneModel.findByIdAndRemove(id).exec();
+    return deletedModel
+      ? MilestoneMapper.persistenceToDomainEntity(deletedModel)
+      : null;
   }
 }

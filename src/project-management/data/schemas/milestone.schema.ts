@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, SchemaTimestampsConfig } from 'mongoose';
 
 @Schema({ collection: 'milestones', timestamps: true })
 export class MilestoneModel {
@@ -10,5 +10,6 @@ export class MilestoneModel {
   description: string;
 }
 
-export type MilestoneDocument = HydratedDocument<MilestoneModel>;
+export type MilestoneDocument = HydratedDocument<MilestoneModel> &
+  SchemaTimestampsConfig; // Temporary fix for incorrect type definition in Mongoose
 export const MilestoneSchema = SchemaFactory.createForClass(MilestoneModel);

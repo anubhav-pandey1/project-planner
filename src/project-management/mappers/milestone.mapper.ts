@@ -1,10 +1,9 @@
-import { MilestoneDocument } from '../data/schemas/milestone.schema';
 import {
   CreateMilestoneDto,
   UpdateMilestoneDto,
-} from '../api/rest/dto/milestone.dto';
-import { Milestone } from '../domain/entities/milestone.entity';
-
+} from 'src/project-management/api/rest/dto/milestone.dto';
+import { Milestone } from 'src/project-management/domain/entities/milestone.entity';
+import { MilestoneDocument } from 'src/project-management/data/schemas/milestone.schema';
 export class MilestoneMapper {
   static createMilestoneDtoToDomainInput(
     createMilestoneDto: CreateMilestoneDto,
@@ -31,6 +30,8 @@ export class MilestoneMapper {
       milestone._id.toHexString(),
       milestone.title,
       milestone.description,
+      milestone.createdAt,
+      milestone.updatedAt,
     );
   }
 }
