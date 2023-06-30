@@ -46,4 +46,23 @@ export class PhaseService {
       ? PhaseMapper.persistenceToDomainEntity(deletedModel)
       : null;
   }
+
+  async handleMilestoneTaggedToPhase(
+    milestoneId: string,
+    oldPhaseId: string,
+    newPhaseId: string,
+  ) {
+    await this.phaseModel
+      .findByIdAndUpdate(oldPhaseId, {
+        $pull: { milestones: milestoneId },
+      })
+      .exec();
+
+    // Need to use $addToSet instead of $push for an idempotent operation
+    await this.phaseModel
+      .findByIdAndUpdate(newPhaseId, {
+        $addToSet: { milestones: milestoneId },
+      })
+      .exec();
+  }
 }

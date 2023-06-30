@@ -9,6 +9,7 @@ import {
 import { Milestone } from 'src/plans/milestones/domain/entities/milestone.entity';
 import { MilestoneMapper } from 'src/plans/milestones/mappers/milestone.mapper';
 import { PhaseService } from 'src/plans/phases/domain/services/phase.service';
+import { ProducerService } from 'src/common/kafka/services/producer.service';
 
 @Injectable()
 export class MilestoneService {
@@ -18,6 +19,9 @@ export class MilestoneService {
 
     @Inject(PhaseService)
     private readonly phaseService: PhaseService,
+
+    @Inject(ProducerService)
+    private readonly producerService: ProducerService,
   ) {}
 
   async create(createMilestoneInput: Partial<Milestone>) {
@@ -51,15 +55,34 @@ export class MilestoneService {
       ? await this.phaseService.findOne(updateMilestoneInput.phaseId.id)
       : undefined;
 
-    const updatedModel = await this.milestoneModel
+    if (updateMilestoneInput.phaseId && !relatedPhase) {
+      throw new Error('Milestone phaseId is invalid');
+    }
+
+    const previousModel = await this.milestoneModel
       .findByIdAndUpdate(
         id,
         { ...updateMilestoneInput, phase: relatedPhase },
         { new: true },
       )
       .exec();
-    return updatedModel
-      ? MilestoneMapper.persistenceToDomainEntity(updatedModel)
+
+    if (relatedPhase) {
+      await this.producerService.produce('milestone', {
+        value: JSON.stringify({
+          type: 'MILESTONE_TAGGED_TO_PHASE',
+          payload: {
+            milestoneId: id,
+            milestoneTitle: previousModel?.title,
+            oldPhaseId: previousModel?.phase.id,
+            newPhaseId: relatedPhase.id,
+          },
+        }),
+      });
+    }
+
+    return previousModel
+      ? MilestoneMapper.persistenceToDomainEntity(previousModel)
       : null;
   }
 

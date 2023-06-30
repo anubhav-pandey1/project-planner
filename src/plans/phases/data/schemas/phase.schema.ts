@@ -10,10 +10,7 @@ export class PhaseModel {
   @Prop()
   description: string;
 
-  @Prop({
-    type: [{ type: Types.ObjectId, ref: 'MilestoneModel' }],
-    select: ['id', 'title'],
-  })
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'MilestoneModel' }] })
   milestones: MilestoneDocument[];
 }
 

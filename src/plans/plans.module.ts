@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+
 import { PhaseController } from 'src/plans/phases/api/rest/controllers/phase.controller';
 import { PhaseService } from 'src/plans/phases/domain/services/phase.service';
 import {
@@ -12,15 +14,20 @@ import {
   MilestoneModel,
   MilestoneSchema,
 } from 'src/plans/milestones/data/schemas/milestone.schema';
+import { KafkaModule } from 'src/common/kafka/kafka.module';
+import { MilestoneEventsConsumer } from 'src/plans/phases/domain/handlers/milestone.handler';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ envFilePath: ['src/plans/.env'] }),
     MongooseModule.forFeature([{ name: PhaseModel.name, schema: PhaseSchema }]),
     MongooseModule.forFeature([
       { name: MilestoneModel.name, schema: MilestoneSchema },
     ]),
+    // Custom Common Modules
+    KafkaModule,
   ],
   controllers: [PhaseController, MilestoneController],
-  providers: [PhaseService, MilestoneService],
+  providers: [PhaseService, MilestoneService, MilestoneEventsConsumer],
 })
 export class PlansModule {}
