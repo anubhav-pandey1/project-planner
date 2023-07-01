@@ -38,7 +38,7 @@ export class MilestoneMapper {
       milestone._id.toHexString(),
       milestone.title,
       milestone.description,
-      new PhaseId(milestone.phase.id),
+      new PhaseId(milestone.phaseId.id.toHexString(), milestone.phaseId.title),
       milestone.createdAt,
       milestone.updatedAt,
     );

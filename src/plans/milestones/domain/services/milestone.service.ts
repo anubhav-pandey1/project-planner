@@ -33,7 +33,7 @@ export class MilestoneService {
     );
     const createdMilestone = await this.milestoneModel.create({
       ...createMilestoneInput,
-      phase: relatedPhase,
+      phaseId: relatedPhase,
     });
     await this.producerService.produce('milestone', {
       value: JSON.stringify({
@@ -72,8 +72,11 @@ export class MilestoneService {
     const previousModel = await this.milestoneModel
       .findByIdAndUpdate(
         id,
-        { ...updateMilestoneInput, phase: relatedPhase },
-        { new: true },
+        {
+          ...updateMilestoneInput,
+          phaseId: relatedPhase,
+        },
+        { new: false },
       )
       .exec();
 
@@ -84,7 +87,7 @@ export class MilestoneService {
           payload: {
             milestoneId: id,
             milestoneTitle: previousModel?.title,
-            oldPhaseId: previousModel?.phase.id,
+            oldPhaseId: previousModel?.phaseId.id,
             newPhaseId: relatedPhase.id,
           },
         }),
@@ -104,7 +107,7 @@ export class MilestoneService {
         payload: {
           milestoneId: id,
           milestoneTitle: deletedModel?.title,
-          phaseId: deletedModel?.phase.id,
+          phaseId: deletedModel?.phaseId.id,
         },
       }),
     });

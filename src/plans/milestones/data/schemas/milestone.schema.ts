@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Types, HydratedDocument, SchemaTimestampsConfig } from 'mongoose';
-import { PhaseDocument } from 'src/plans/phases/data/schemas/phase.schema';
 
 @Schema({ collection: 'milestones', timestamps: true })
 export class MilestoneModel {
@@ -10,8 +9,13 @@ export class MilestoneModel {
   @Prop()
   description: string;
 
-  @Prop({ type: Types.ObjectId, ref: 'PhaseModel' })
-  phase: PhaseDocument;
+  @Prop({
+    type: { id: Types.ObjectId, title: String },
+    ref: 'PhaseModel',
+    _id: false,
+    required: true,
+  })
+  phaseId: { id: Types.ObjectId; title: string };
 }
 
 export type MilestoneDocument = HydratedDocument<MilestoneModel> &

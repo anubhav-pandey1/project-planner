@@ -1,5 +1,5 @@
 export class PhaseId {
-  constructor(readonly id: string) {}
+  constructor(readonly id: string, readonly title?: string) {}
 }
 
 export class Milestone {
