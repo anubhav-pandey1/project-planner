@@ -35,6 +35,16 @@ export class MilestoneService {
       ...createMilestoneInput,
       phase: relatedPhase,
     });
+    await this.producerService.produce('milestone', {
+      value: JSON.stringify({
+        type: 'MILESTONE_TAGGED_TO_PHASE',
+        payload: {
+          milestoneId: createdMilestone._id,
+          oldPhaseId: null,
+          newPhaseId: relatedPhase?.id,
+        },
+      }),
+    });
     return MilestoneMapper.persistenceToDomainEntity(createdMilestone);
   }
 
@@ -88,8 +98,24 @@ export class MilestoneService {
 
   async delete(id: string) {
     const deletedModel = await this.milestoneModel.findByIdAndRemove(id).exec();
+    await this.producerService.produce('milestone', {
+      value: JSON.stringify({
+        type: 'MILESTONE_DELETED',
+        payload: {
+          milestoneId: id,
+          milestoneTitle: deletedModel?.title,
+          phaseId: deletedModel?.phase.id,
+        },
+      }),
+    });
     return deletedModel
       ? MilestoneMapper.persistenceToDomainEntity(deletedModel)
       : null;
+  }
+
+  async handlePhaseDeleted(phaseId: string) {
+    // All milestones must have a phase
+    // So a phase getting deleted should delete all milestones
+    return this.milestoneModel.deleteMany({ 'phase.id': phaseId }).exec();
   }
 }

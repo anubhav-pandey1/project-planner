@@ -1,19 +1,19 @@
 import { KafkaMessage } from 'kafkajs';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConsumerService } from 'src/common/kafka/services/consumer.service';
-import { PhaseService } from 'src/plans/phases/domain/services/phase.service';
+import { MilestoneService } from 'src/plans/milestones/domain/services/milestone.service';
 
 @Injectable()
-export class MilestoneEventsConsumer implements OnModuleInit {
+export class PhaseEventsConsumer implements OnModuleInit {
   constructor(
     private readonly consumerService: ConsumerService,
-    private readonly phaseService: PhaseService,
+    private readonly milestoneService: MilestoneService,
   ) {}
 
   async onModuleInit() {
     await this.consumerService.consume({
-      topic: { topic: 'milestone' },
-      config: { groupId: 'PhaseService' },
+      topic: { topic: 'phase' },
+      config: { groupId: 'MilestoneService' },
       onMessage: async (message) => {
         await this.handleEvent(message);
       },
@@ -25,18 +25,8 @@ export class MilestoneEventsConsumer implements OnModuleInit {
     const messageType = JSON.parse(message.value?.toString()).type;
     const messagePayload = JSON.parse(message.value?.toString()).payload;
     switch (messageType) {
-      case 'MILESTONE_TAGGED_TO_PHASE':
-        this.phaseService.handleMilestoneTaggedToPhase(
-          messagePayload.milestoneId,
-          messagePayload.oldPhaseId,
-          messagePayload.newPhaseId,
-        );
-        break;
-      case 'MILESTONE_DELETED':
-        this.phaseService.handleMilestoneDeleted(
-          messagePayload.milestoneId,
-          messagePayload.phaseId,
-        );
+      case 'PHASE_DELETED':
+        await this.milestoneService.handlePhaseDeleted(messagePayload.phaseId);
         break;
       default:
         break;

@@ -16,6 +16,7 @@ import {
 } from 'src/plans/milestones/data/schemas/milestone.schema';
 import { KafkaModule } from 'src/common/kafka/kafka.module';
 import { MilestoneEventsConsumer } from 'src/plans/phases/domain/handlers/milestone.handler';
+import { PhaseEventsConsumer } from 'src/plans/milestones/domain/handlers/phase.handler';
 
 @Module({
   imports: [
@@ -28,6 +29,11 @@ import { MilestoneEventsConsumer } from 'src/plans/phases/domain/handlers/milest
     KafkaModule,
   ],
   controllers: [PhaseController, MilestoneController],
-  providers: [PhaseService, MilestoneService, MilestoneEventsConsumer],
+  providers: [
+    PhaseService,
+    MilestoneService,
+    MilestoneEventsConsumer,
+    PhaseEventsConsumer,
+  ],
 })
 export class PlansModule {}

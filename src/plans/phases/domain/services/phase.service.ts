@@ -1,5 +1,5 @@
 import { Model } from 'mongoose';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
 import {
@@ -8,12 +8,16 @@ import {
 } from 'src/plans/phases/data/schemas/phase.schema';
 import { Phase } from 'src/plans/phases/domain/entities/phase.entity';
 import { PhaseMapper } from 'src/plans/phases/mappers/phase.mapper';
+import { ProducerService } from 'src/common/kafka/services/producer.service';
 
 @Injectable()
 export class PhaseService {
   constructor(
     @InjectModel(PhaseModel.name)
     private readonly phaseModel: Model<PhaseDocument>,
+
+    @Inject(ProducerService)
+    private readonly producerService: ProducerService,
   ) {}
 
   async create(createPhaseInput: Partial<Phase>) {
@@ -42,6 +46,12 @@ export class PhaseService {
 
   async delete(id: string) {
     const deletedModel = await this.phaseModel.findByIdAndRemove(id).exec();
+    await this.producerService.produce('phase', {
+      value: JSON.stringify({
+        type: 'PHASE_DELETED',
+        payload: { phaseId: deletedModel?._id },
+      }),
+    });
     return deletedModel
       ? PhaseMapper.persistenceToDomainEntity(deletedModel)
       : null;
@@ -62,6 +72,14 @@ export class PhaseService {
     await this.phaseModel
       .findByIdAndUpdate(newPhaseId, {
         $addToSet: { milestones: milestoneId },
+      })
+      .exec();
+  }
+
+  async handleMilestoneDeleted(milestoneId: string, phaseId: string) {
+    await this.phaseModel
+      .findByIdAndUpdate(phaseId, {
+        $pull: { milestones: milestoneId },
       })
       .exec();
   }
