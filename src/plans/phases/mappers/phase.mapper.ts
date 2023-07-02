@@ -3,7 +3,7 @@ import {
   UpdatePhaseDto,
 } from 'src/plans/phases/api/rest/dto/phase.dto';
 import {
-  MilestoneReference,
+  MilestoneId,
   Phase,
 } from 'src/plans/phases/domain/entities/phase.entity';
 import { PhaseDocument } from 'src/plans/phases/data/schemas/phase.schema';
@@ -25,15 +25,15 @@ export class PhaseMapper {
   }
 
   static persistenceToDomainEntity(phase: PhaseDocument) {
-    const milestones = phase.milestones.map(
-      (milestone) =>
-        new MilestoneReference(milestone._id.toHexString(), milestone.title),
+    const milestoneIds = phase.milestoneIds.map(
+      (milestoneId) =>
+        new MilestoneId(milestoneId.id.toHexString(), milestoneId.title),
     );
     return new Phase(
       phase._id.toHexString(),
       phase.title,
       phase.description,
-      milestones,
+      milestoneIds,
       phase.createdAt,
       phase.updatedAt,
     );

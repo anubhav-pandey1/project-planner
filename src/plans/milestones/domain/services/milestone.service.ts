@@ -40,6 +40,7 @@ export class MilestoneService {
         type: 'MILESTONE_TAGGED_TO_PHASE',
         payload: {
           milestoneId: createdMilestone._id,
+          milestoneTitle: createdMilestone.title,
           oldPhaseId: null,
           newPhaseId: relatedPhase?.id,
         },
@@ -119,6 +120,6 @@ export class MilestoneService {
   async handlePhaseDeleted(phaseId: string) {
     // All milestones must have a phase
     // So a phase getting deleted should delete all milestones
-    return this.milestoneModel.deleteMany({ 'phase.id': phaseId }).exec();
+    return this.milestoneModel.deleteMany({ 'phaseId.id': phaseId }).exec();
   }
 }

@@ -28,6 +28,7 @@ export class MilestoneEventsConsumer implements OnModuleInit {
       case 'MILESTONE_TAGGED_TO_PHASE':
         this.phaseService.handleMilestoneTaggedToPhase(
           messagePayload.milestoneId,
+          messagePayload.milestoneTitle,
           messagePayload.oldPhaseId,
           messagePayload.newPhaseId,
         );

@@ -1,4 +1,4 @@
-export class MilestoneReference {
+export class MilestoneId {
   constructor(readonly id: string, readonly title: string) {}
 }
 
@@ -7,7 +7,7 @@ export class Phase {
     readonly id: string,
     readonly title: string,
     readonly description: string,
-    readonly milestones?: MilestoneReference[],
+    readonly milestoneIds: MilestoneId[] = [],
     readonly createdAt?: string | boolean,
     readonly updatedAt?: string | boolean,
   ) {}

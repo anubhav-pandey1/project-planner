@@ -59,19 +59,23 @@ export class PhaseService {
 
   async handleMilestoneTaggedToPhase(
     milestoneId: string,
+    milestoneString: string,
     oldPhaseId: string,
     newPhaseId: string,
   ) {
     await this.phaseModel
       .findByIdAndUpdate(oldPhaseId, {
-        $pull: { milestones: milestoneId },
+        $pull: { milestoneIds: { id: milestoneId } },
       })
       .exec();
 
     // Need to use $addToSet instead of $push for an idempotent operation
+    // NOTE: Unsure if $addToSet only uses the id or the title as well?
     await this.phaseModel
       .findByIdAndUpdate(newPhaseId, {
-        $addToSet: { milestones: milestoneId },
+        $addToSet: {
+          milestoneIds: { id: milestoneId, title: milestoneString },
+        },
       })
       .exec();
   }
@@ -79,7 +83,7 @@ export class PhaseService {
   async handleMilestoneDeleted(milestoneId: string, phaseId: string) {
     await this.phaseModel
       .findByIdAndUpdate(phaseId, {
-        $pull: { milestones: milestoneId },
+        $pull: { milestoneIds: { id: milestoneId } },
       })
       .exec();
   }
